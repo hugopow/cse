@@ -1,4 +1,4 @@
-# cse
+# Bash script to install Container Service Extension automatically and setup Linux Service on Photon OS
 
 A example bash script to setup Container Service Extension 3.0.4 into VMware Photon OS 3.
 You will need to remove my settings and replace them with your environment variables and passwords.
