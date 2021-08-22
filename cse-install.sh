@@ -18,16 +18,22 @@ chmod 777 /
 groupadd cse
 useradd cse -g cse -m -p Vmware1! -d /opt/vmware/cse
 chown cse:cse -R /opt
- 
+chmod 775 -R /opt
+
 echo "Setup cse service account"
 #su - cse
-chown cse:cse -R /opt
 sudo -u cse -i mkdir -p /opt/vmware/cse/.ssh
 sudo -u cse -i cat >> /opt/vmware/cse/.ssh/authorized_keys << EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
 EOF
 
 chown cse:cse -R /opt
+chmod 775 -R /opt
+
+touch /opt/vmware/cse/.bash_profile
+chown cse:cse /opt/vmware/cse/.bash_profile
+chmod 775 -R /opt
+
 sudo -u cse -i cat >> /opt/vmware/cse/.bash_profile << EOF
 # For Container Service Extension
 export CSE_TKG_M_ENABLED=True
@@ -35,7 +41,10 @@ export CSE_CONFIG=/opt/vmware/cse/config/config.yaml
 export CSE_CONFIG_PASSWORD=Vmware1!
 source /opt/vmware/cse/python/bin/activate
 EOF
- 
+
+chown cse:cse -R /opt
+chmod 775 -R /opt
+
 sudo -u cse -i echo "Install CSE in Python virtual environment"
 sudo -u cse -i python3 -m venv /opt/vmware/cse/python
 sudo -u cse -i source /opt/vmware/cse/python/bin/activate
@@ -51,7 +60,10 @@ sudo -u cse -i cat >  /opt/vmware/cse/.vcd-cli/profiles.yaml << EOF
 extensions:
 - container_service_extension.client.cse
 EOF
- 
+
+chown cse:cse -R /opt
+chmod 775 -R /opt
+
 sudo -u cse -i vcd cse version
  
 sudo -u cse -i echo "Add my Let's Encrypt intermediate and root certs. Use your certificates issued by your CA to enable verify=true with CSE"
@@ -138,7 +150,10 @@ JDGFoqgCWjBH4d1QB7wCCZAA62RjYJsWvIjJEubSfZGL+T0yjWW06XyxV3bqxbYo
 Ob8VZRzI9neWagqNdwvYkQsEjgfbKbYK7p2CNTUQ
 -----END CERTIFICATE-----
 EOF
- 
+
+chown cse:cse -R /opt
+chmod 775 -R /opt
+
 sudo -u cse -i echo "Create cse service account in VCD"
 sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 sudo -u cse -i echo "Enter VCD system administrator username and password to create service role"
