@@ -1,5 +1,7 @@
 #!/bin/bash
 # Script to install Container Service Extension 3.0.4 with both native and TKGm Kubernetes runtimes for VMware Cloud Director
+# Ensure you change the sections below to suit your environment.
+# By all means, use at your own risk, I am not a bash scripting expert as you can tell. Feedback and comments welcome.
 
 echo "Update Photon repositories"
 cd /etc/yum.repos.d/
@@ -11,7 +13,7 @@ tdnf --assumeyes update
 echo "Install dependencies"
 tdnf --assumeyes install build-essential python3-devel python3-pip git sudo
  
-echo "Prepare cse user and application directories"
+echo "Prepare CSE user and application directories"
 mkdir -p /opt/vmware/cse
 chmod 775 -R /opt
 chmod 777 /
@@ -20,7 +22,7 @@ useradd cse -g cse -m -p Vmware1! -d /opt/vmware/cse
 chown cse:cse -R /opt
 chmod 775 -R /opt
 
-echo "Setup cse service account"
+echo "Setup CSE service account"
 #su - cse
 sudo -u cse -i mkdir -p /opt/vmware/cse/.ssh
 sudo -u cse -i cat >> /opt/vmware/cse/.ssh/authorized_keys << EOF
@@ -155,15 +157,15 @@ EOF
 chown cse:cse -R /opt
 chmod 775 -R /opt
 
-sudo -u cse -i echo "Create cse service account in VCD"
+sudo -u cse -i echo "Create CSE service role in VCD"
 sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 sudo -u cse -i echo "Enter VCD system administrator username and password to create service role"
 sudo -u cse -i cse create-service-role vcd.vmwire.com
 
-sudo -u cse -i echo "Create VCD service account for CSE"
+sudo -u cse -i echo "Create CSE service account in VCD"
 sudo -u cse -i vcd user create --enabled svc-cse Vmware1! "CSE Service Role"
  
-sudo -u cse -i echo "Create CSE config file"
+sudo -u cse -i echo "Create CSE config file for native Kubernetes runtimes"
 sudo -u cse -i mkdir -p /opt/vmware/cse/config
  
 sudo -u cse -i cat > /opt/vmware/cse/config/native-config-not-encrypted.conf << EOF
@@ -241,7 +243,7 @@ sudo -u cse -i cse install -k /opt/vmware/cse/.ssh/authorized_keys
 sudo -u cse -i echo "Enable Kubernetes runtimes for CSE"
 sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 
-sudo -u cse -i echo "Enable a tenant to use native runtimes with CSE"
+sudo -u cse -i echo "Enable tenants to use native runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --native --org tenant1 tenant1-vdc
 
 # Also setup TKGm runtimes for CSE
@@ -321,7 +323,7 @@ sudo -u cse -i echo "Enable Kubernetes runtimes for CSE"
 sudo -u cse -i export CSE_TKG_M_ENABLED=True
 sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 
-sudo -u cse -i echo "Enable a tenant to use TKGm runtimes with CSE"
+sudo -u cse -i echo "Enable tenants to use TKGm runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --tkg --org tenant1 tenant1-vdc
 
 sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"
@@ -336,10 +338,6 @@ EOF
 sudo -u cse -i echo "Make cse.sh executable"
 chown cse:cse /opt/vmware/cse/cse.sh
 sudo -u cse -i chmod +x /opt/vmware/cse/cse.sh
- 
-sudo -u cse -i echo "Deactivate the python virtual environment and go back to root"
-#sudo -u cse -i deactivate
-#sudo -u cse -i exit
  
 echo "Setup cse.service, using MQTT instead of RabbitMQ"
 cat > /etc/systemd/system/cse.service << EOF
