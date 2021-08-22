@@ -315,7 +315,7 @@ sudo -u cse -i echo "Upgrade CSE with TKGm Kubernetes runtimes"
 sudo -u cse -i cse upgrade -k /opt/vmware/cse/.ssh/authorized_keys
  
 # Or use this if you've already installed and want to skip template creation again
-sudo -u cse -i cse upgrade --skip-template-creation -k /opt/vmware/cse/.ssh/authorized_keys
+#sudo -u cse -i cse upgrade --skip-template-creation -k /opt/vmware/cse/.ssh/authorized_keys
 
 sudo -u cse -i echo "Enable Kubernetes runtimes for CSE"
 sudo -u cse -i export CSE_TKG_M_ENABLED=True
