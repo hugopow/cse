@@ -1,4 +1,5 @@
 #!/bin/bash
+# Script to install Container Service Extension 3.0.4
 
 echo "Update Photon repositories"
 cd /etc/yum.repos.d/
