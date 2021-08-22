@@ -217,6 +217,9 @@ broker:
   vdc: cse-vdc
 EOF
 
+chown cse:cse -R /opt
+chmod 775 -R /opt
+
 sudo -u cse -i echo "Encrypting config file"
 sudo -u cse -i cse encrypt /opt/vmware/cse/config/config-not-encrypted.conf --output /opt/vmware/cse/config/config.yaml
 sudo -u cse -i chmod 600 /opt/vmware/cse/config/config.yaml
@@ -256,13 +259,13 @@ export CSE_CONFIG=/opt/vmware/cse/config/config.yaml
 export CSE_CONFIG_PASSWORD=Vmware1!
 cse run
 EOF
- 
+
 sudo -u cse -i echo "Make cse.sh executable"
 sudo -u cse -i chmod +x /opt/vmware/cse/cse.sh
  
 sudo -u cse -i echo "Deactivate the python virtual environment and go back to root"
-sudo -u cse -i deactivate
-sudo -u cse -i exit
+#sudo -u cse -i deactivate
+#sudo -u cse -i exit
  
 echo "Setup cse.service, using MQTT instead of RabbitMQ"
 cat > /etc/systemd/system/cse.service << EOF
