@@ -66,7 +66,8 @@ chmod 775 -R /opt
 
 sudo -u cse -i vcd cse version
  
-sudo -u cse -i echo "Add my Let's Encrypt intermediate and root certs. Use your certificates issued by your CA to enable verify=true with CSE"
+sudo -u cse -i echo "Add my Let's Encrypt intermediate and root certs. Use your certificates issued by your CA to enable verify=true with CSE."
+# This section is optional, if you are using self-signed certificates in your environment then ensure you use verify=false in the config file.
 sudo -u cse -i cat >> /opt/vmware/cse/python/lib/python3.7/site-packages/certifi/cacert.pem << EOF
 -----BEGIN CERTIFICATE-----
 MIIFFjCCAv6gAwIBAgIRAJErCErPDBinU/bWLiWnX1owDQYJKoZIhvcNAQELBQAw
