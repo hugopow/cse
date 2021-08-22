@@ -9,6 +9,7 @@ Please refer to these two links to get familiar with Container Service Extension
 1. https://vmwire.com/2021/08/10/install-guide-container-service-extension-3-0-4-with-vmware-cloud-director-for-tanzu-kubernetes-grid/
 2. https://vmwire.com/2021/08/21/install-container-service-extension-as-a-service-on-photon-os-3/
 
+USAGE INSTRUCTIONS
 
 Get the script to the Photon VM by running the following command
 
@@ -17,3 +18,9 @@ curl https://raw.githubusercontent.com/hugopow/cse/main/cse-install.sh --output 
 Make it executable
 
 chmod +x cse-install.sh
+
+Edit the script and remove/add your details
+
+Run the script with
+
+sh cse-install.sh as root. The script will do the rest.
