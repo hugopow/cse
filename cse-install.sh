@@ -21,12 +21,14 @@ chown cse:cse -R /opt
  
 echo "Setup cse service account"
 #su - cse
-sudo -u cse -i mkdir -p ~/.ssh
-sudo -u cse -i cat >> ~/.ssh/authorized_keys << EOF
+chown cse:cse -R /opt
+sudo -u cse -i mkdir -p /opt/vmware/cse/.ssh
+sudo -u cse -i cat >> /opt/vmware/cse/.ssh/authorized_keys << EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
 EOF
 
-sudo -u cse -i cat >> ~/.bash_profile << EOF
+chown cse:cse -R /opt
+sudo -u cse -i cat >> /opt/vmware/cse/.bash_profile << EOF
 # For Container Service Extension
 export CSE_TKG_M_ENABLED=True
 export CSE_CONFIG=/opt/vmware/cse/config/config.yaml
@@ -41,11 +43,11 @@ sudo -u cse -i pip3 install git+https://github.com/vmware/container-service-exte
 
 sudo -u cse -i cse version
  
-sudo -u cse -i source ~/.bash_profile
+sudo -u cse -i source /opt/vmware/cse/.bash_profile
  
 sudo -u cse -i echo "Prepare vcd-cli"
-sudo -u cse -i mkdir -p ~/.vcd-cli
-sudo -u cse -i cat >  ~/.vcd-cli/profiles.yaml << EOF
+sudo -u cse -i mkdir -p /opt/vmware/cse/.vcd-cli
+sudo -u cse -i cat >  /opt/vmware/cse/.vcd-cli/profiles.yaml << EOF
 extensions:
 - container_service_extension.client.cse
 EOF
@@ -208,15 +210,15 @@ sudo -u cse -i cse check /opt/vmware/cse/config/config.yaml
 sudo -u cse -i echo "List all Kubernetes templates in VCD"
 sudo -u cse -i cse template list
 
-sudo -u cse -i echo "Setting up public keys into CSE server under ~/.ssh/authorized_keys"
-sudo -u cse -i mkdir -p ~/.ssh
+#sudo -u cse -i echo "Setting up public keys into CSE server under ~/.ssh/authorized_keys"
+#sudo -u cse -i mkdir -p /opt/vmware/cse/.ssh
 # Add your public key(s) here
-sudo -u cse -i cat >> ~/.ssh/authorized_keys << EOF
-ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
-EOF
+#sudo -u cse -i cat >> ~/.ssh/authorized_keys << EOF
+#ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
+#EOF
 
 sudo -u cse -i echo "Install CSE" 
-sudo -u cse -i cse install -k ~/.ssh/authorized_keys
+sudo -u cse -i cse install -k /opt/vmware/cse/.ssh/authorized_keys
  
 # Or use this if you've already installed and want to skip template creation again
 #sudo -u cse -i cse upgrade --skip-template-creation -k ~/.ssh/authorized_keys
@@ -231,7 +233,7 @@ sudo -u cse -i vcd cse ovdc enable tenant1-vdc -o tenant1 --tkg
 sudo -u cse -i echo "Enable a tenant to use native runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --native --org tenant1 tenant1-vdc
 
-sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"sudo -u cse -i
+sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"
 sudo -u cse -i cat > /opt/vmware/cse/cse.sh << EOF
 #!/usr/bin/env bash
 source /opt/vmware/cse/python/bin/activate
