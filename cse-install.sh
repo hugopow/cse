@@ -245,11 +245,11 @@ sudo -u cse -i echo "Enable TKGm runtimes for CSE"
 sudo -u cse -i export CSE_TKG_M_ENABLED=True
 sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 
-sudo -u cse -i echo "Enable a tenant to use TKGm runtimes with CSE"
-sudo -u cse -i vcd cse ovdc enable tenant1-vdc -o tenant1 --tkg
-
 sudo -u cse -i echo "Enable a tenant to use native runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --native --org tenant1 tenant1-vdc
+
+sudo -u cse -i echo "Enable a tenant to use TKGm runtimes with CSE"
+sudo -u cse -i vcd cse ovdc enable --tkg --org tenant1 tenant1-vdc
 
 sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"
 sudo -u cse -i cat > /opt/vmware/cse/cse.sh << EOF
