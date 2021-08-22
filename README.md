@@ -13,3 +13,7 @@ Please refer to these two links to get familiar with Container Service Extension
 Get the script to the Photon VM by running the following command
 
 curl https://raw.githubusercontent.com/hugopow/cse/main/cse-install.sh --output cse-install.sh
+
+Make it executable
+
+chmod +x cse-install.sh
