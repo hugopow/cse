@@ -15,12 +15,12 @@ Get the script to the Photon VM by running the following command
 
 curl https://raw.githubusercontent.com/hugopow/cse/main/cse-install.sh --output cse-install.sh
 
-Make it executable
-
+# Make it executable
 chmod +x cse-install.sh
 
-Edit the script and remove/add your details
+# Edit the script and remove/add your details
+#Run the script with
 
-Run the script with
+sh cse-install.sh
 
-sh cse-install.sh as root. The script will do the rest.
+...as root. The script will do the rest.
