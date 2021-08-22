@@ -142,7 +142,6 @@ sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 sudo -u cse -i echo "Enter VCD system administrator username and password to create service role"
 sudo -u cse -i cse create-service-role vcd.vmwire.com
 
- 
 sudo -u cse -i echo "Create VCD service account for CSE"
 sudo -u cse -i vcd user create --enabled svc-cse Vmware1! "CSE Service Role"
  
@@ -220,7 +219,7 @@ sudo -u cse -i echo "Install CSE"
 sudo -u cse -i cse install -k ~/.ssh/authorized_keys
  
 # Or use this if you've already installed and want to skip template creation again
-#cse upgrade --skip-template-creation -k ~/.ssh/authorized_keys
+#sudo -u cse -i cse upgrade --skip-template-creation -k ~/.ssh/authorized_keys
 
 sudo -u cse -i echo "Enable TKGm runtimes for CSE"
 sudo -u cse -i export CSE_TKG_M_ENABLED=True
@@ -232,8 +231,7 @@ sudo -u cse -i vcd cse ovdc enable tenant1-vdc -o tenant1 --tkg
 sudo -u cse -i echo "Enable a tenant to use native runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --native --org tenant1 tenant1-vdc
 
-
-sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"
+sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"sudo -u cse -i
 sudo -u cse -i cat > /opt/vmware/cse/cse.sh << EOF
 #!/usr/bin/env bash
 source /opt/vmware/cse/python/bin/activate
