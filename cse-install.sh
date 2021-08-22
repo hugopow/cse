@@ -9,7 +9,7 @@ echo "Update Photon"
 tdnf --assumeyes update
  
 echo "Install dependencies"
-tdnf --assumeyes install build-essential python3-devel python3-pip git
+tdnf --assumeyes install build-essential python3-devel python3-pip git sudo
  
 echo "Prepare cse user and application directories"
 mkdir -p /opt/vmware/cse
@@ -20,13 +20,13 @@ useradd cse -g cse -m -p Vmware1! -d /opt/vmware/cse
 chown cse:cse -R /opt
  
 echo "Setup cse service account"
-su - cse
-mkdir -p ~/.ssh
-cat >> ~/.ssh/authorized_keys << EOF
+#su - cse
+sudo -u cse -i mkdir -p ~/.ssh
+sudo -u cse -i cat >> ~/.ssh/authorized_keys << EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
 EOF
 
-cat >> ~/.bash_profile << EOF
+sudo -u cse -i cat >> ~/.bash_profile << EOF
 # For Container Service Extension
 export CSE_TKG_M_ENABLED=True
 export CSE_CONFIG=/opt/vmware/cse/config/config.yaml
@@ -34,26 +34,26 @@ export CSE_CONFIG_PASSWORD=Vmware1!
 source /opt/vmware/cse/python/bin/activate
 EOF
  
-echo "Install CSE in Python virtual environment"
-python3 -m venv /opt/vmware/cse/python
-source /opt/vmware/cse/python/bin/activate
-pip3 install git+https://github.com/vmware/container-service-extension.git@3.0.4
+sudo -u cse -i echo "Install CSE in Python virtual environment"
+sudo -u cse -i python3 -m venv /opt/vmware/cse/python
+sudo -u cse -i source /opt/vmware/cse/python/bin/activate
+sudo -u cse -i pip3 install git+https://github.com/vmware/container-service-extension.git@3.0.4
 
-cse version
+sudo -u cse -i cse version
  
-source ~/.bash_profile
+sudo -u cse -i source ~/.bash_profile
  
-echo "Prepare vcd-cli"
-mkdir -p ~/.vcd-cli
-cat >  ~/.vcd-cli/profiles.yaml << EOF
+sudo -u cse -i echo "Prepare vcd-cli"
+sudo -u cse -i mkdir -p ~/.vcd-cli
+sudo -u cse -i cat >  ~/.vcd-cli/profiles.yaml << EOF
 extensions:
 - container_service_extension.client.cse
 EOF
  
-vcd cse version
+sudo -u cse -i vcd cse version
  
-echo "Add my Let's Encrypt intermediate and root certs. Use your certificates issued by your CA to enable verify=true with CSE"
-cat >> /opt/vmware/cse/python/lib/python3.7/site-packages/certifi/cacert.pem << EOF #ok
+sudo -u cse -i echo "Add my Let's Encrypt intermediate and root certs. Use your certificates issued by your CA to enable verify=true with CSE"
+sudo -u cse -i cat >> /opt/vmware/cse/python/lib/python3.7/site-packages/certifi/cacert.pem << EOF
 -----BEGIN CERTIFICATE-----
 MIIFFjCCAv6gAwIBAgIRAJErCErPDBinU/bWLiWnX1owDQYJKoZIhvcNAQELBQAw
 TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh
@@ -137,19 +137,19 @@ Ob8VZRzI9neWagqNdwvYkQsEjgfbKbYK7p2CNTUQ
 -----END CERTIFICATE-----
 EOF
  
-echo "Create cse service account in VCD"
-vcd login vcd.vmwire.com system administrator -p Vmware1!
-echo "Enter VCD system administrator username and password to create service role"
-cse create-service-role vcd.vmwire.com
+sudo -u cse -i echo "Create cse service account in VCD"
+sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
+sudo -u cse -i echo "Enter VCD system administrator username and password to create service role"
+sudo -u cse -i cse create-service-role vcd.vmwire.com
 
  
-echo "Create VCD service account for CSE"
-vcd user create --enabled svc-cse Vmware1! "CSE Service Role"
+sudo -u cse -i echo "Create VCD service account for CSE"
+sudo -u cse -i vcd user create --enabled svc-cse Vmware1! "CSE Service Role"
  
-echo "Create CSE config file"
-mkdir -p /opt/vmware/cse/config
+sudo -u cse -i echo "Create CSE config file"
+sudo -u cse -i mkdir -p /opt/vmware/cse/config
  
-cat > /opt/vmware/cse/config/config-not-encrypted.conf << EOF
+sudo -u cse -i cat > /opt/vmware/cse/config/config-not-encrypted.conf << EOF
 # Only one of the amqp or mqtt sections should be present. I am using MQTT.
  
 #amqp: # I recommend using MQTT
@@ -201,40 +201,40 @@ broker:
   vdc: cse-vdc
 EOF
 
-echo "Encrypting config file"
-cse encrypt /opt/vmware/cse/config/config-not-encrypted.conf --output /opt/vmware/cse/config/config.yaml
-chmod 600 /opt/vmware/cse/config/config.yaml
-cse check /opt/vmware/cse/config/config.yaml
+sudo -u cse -i echo "Encrypting config file"
+sudo -u cse -i cse encrypt /opt/vmware/cse/config/config-not-encrypted.conf --output /opt/vmware/cse/config/config.yaml
+sudo -u cse -i chmod 600 /opt/vmware/cse/config/config.yaml
+sudo -u cse -i cse check /opt/vmware/cse/config/config.yaml
 
-echo "List all Kubernetes templates in VCD"
-cse template list
+sudo -u cse -i echo "List all Kubernetes templates in VCD"
+sudo -u cse -i cse template list
 
-echo "Setting up public keys into CSE server under ~/.ssh/authorized_keys"
-mkdir -p ~/.ssh
+sudo -u cse -i echo "Setting up public keys into CSE server under ~/.ssh/authorized_keys"
+sudo -u cse -i mkdir -p ~/.ssh
 # Add your public key(s) here
-cat >> ~/.ssh/authorized_keys << EOF
+sudo -u cse -i cat >> ~/.ssh/authorized_keys << EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
 EOF
 
-echo "Install CSE" 
-cse install -k ~/.ssh/authorized_keys
+sudo -u cse -i echo "Install CSE" 
+sudo -u cse -i cse install -k ~/.ssh/authorized_keys
  
 # Or use this if you've already installed and want to skip template creation again
 #cse upgrade --skip-template-creation -k ~/.ssh/authorized_keys
 
-echo "Enable TKGm runtimes for CSE"
-export CSE_TKG_M_ENABLED=True
-vcd login vcd.vmwire.com system administrator -p Vmware1!
+sudo -u cse -i echo "Enable TKGm runtimes for CSE"
+sudo -u cse -i export CSE_TKG_M_ENABLED=True
+sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 
-echo "Enable a tenant to use TKGm runtimes with CSE"
-vcd cse ovdc enable tenant1-vdc -o tenant1 --tkg
+sudo -u cse -i echo "Enable a tenant to use TKGm runtimes with CSE"
+sudo -u cse -i vcd cse ovdc enable tenant1-vdc -o tenant1 --tkg
 
-echo "Enable a tenant to use native runtimes with CSE"
-vcd cse ovdc enable --native --org tenant1 tenant1-vdc
+sudo -u cse -i echo "Enable a tenant to use native runtimes with CSE"
+sudo -u cse -i vcd cse ovdc enable --native --org tenant1 tenant1-vdc
 
 
-echo "Setup cse.sh to create a CSE Linux service"
-cat > /opt/vmware/cse/cse.sh << EOF
+sudo -u cse -i echo "Setup cse.sh to create a CSE Linux service"
+sudo -u cse -i cat > /opt/vmware/cse/cse.sh << EOF
 #!/usr/bin/env bash
 source /opt/vmware/cse/python/bin/activate
 export CSE_CONFIG=/opt/vmware/cse/config/config.yaml
@@ -242,12 +242,12 @@ export CSE_CONFIG_PASSWORD=Vmware1!
 cse run
 EOF
  
-echo "Make cse.sh executable"
-chmod +x /opt/vmware/cse/cse.sh
+sudo -u cse -i echo "Make cse.sh executable"
+sudo -u cse -i chmod +x /opt/vmware/cse/cse.sh
  
-echo "Deactivate the python virtual environment and go back to root"
-deactivate
-exit
+sudo -u cse -i echo "Deactivate the python virtual environment and go back to root"
+sudo -u cse -i deactivate
+sudo -u cse -i exit
  
 echo "Setup cse.service, using MQTT instead of RabbitMQ"
 cat > /etc/systemd/system/cse.service << EOF
