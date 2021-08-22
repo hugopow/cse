@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to install Container Service Extension 3.0.4
+# Script to install Container Service Extension 3.0.4 with both native and TKGm Kubernetes runtimes for VMware Cloud Director
 
 echo "Update Photon repositories"
 cd /etc/yum.repos.d/
@@ -165,7 +165,8 @@ sudo -u cse -i vcd user create --enabled svc-cse Vmware1! "CSE Service Role"
 sudo -u cse -i echo "Create CSE config file"
 sudo -u cse -i mkdir -p /opt/vmware/cse/config
  
-sudo -u cse -i cat > /opt/vmware/cse/config/config-not-encrypted.conf << EOF
+sudo -u cse -i cat > /opt/vmware/cse/config/native-config-not-encrypted.conf << EOF
+# native-config-not-encrypted.conf for native kubernetes clusters using this cookbook https://raw.githubusercontent.com/vmware/container-service-extension-templates/master/template.yaml
 # Only one of the amqp or mqtt sections should be present. I am using MQTT.
  
 #amqp: # I recommend using MQTT
@@ -223,19 +224,12 @@ chown cse:cse -R /opt
 chmod 775 -R /opt
 
 sudo -u cse -i echo "Encrypting config file"
-sudo -u cse -i cse encrypt /opt/vmware/cse/config/config-not-encrypted.conf --output /opt/vmware/cse/config/config.yaml
+sudo -u cse -i cse encrypt /opt/vmware/cse/config/native-config-not-encrypted.conf --output /opt/vmware/cse/config/config.yaml
 sudo -u cse -i chmod 600 /opt/vmware/cse/config/config.yaml
 sudo -u cse -i cse check /opt/vmware/cse/config/config.yaml
 
 sudo -u cse -i echo "List all Kubernetes templates in VCD"
 sudo -u cse -i cse template list
-
-#sudo -u cse -i echo "Setting up public keys into CSE server under ~/.ssh/authorized_keys"
-#sudo -u cse -i mkdir -p /opt/vmware/cse/.ssh
-# Add your public key(s) here
-#sudo -u cse -i cat >> ~/.ssh/authorized_keys << EOF
-#ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhcw67bz3xRjyhPLysMhUHJPhmatJkmPUdMUEZre+MeiDhC602jkRUNVu43Nk8iD/I07kLxdAdVPZNoZuWE7WBjmn13xf0Ki2hSH/47z3ObXrd8Vleq0CXa+qRnCeYM3FiKb4D5IfL4XkHW83qwp8PuX8FHJrXY8RacVaOWXrESCnl3cSC0tA3eVxWoJ1kwHxhSTfJ9xBtKyCqkoulqyqFYU2A1oMazaK9TYWKmtcYRn27CC1Jrwawt2zfbNsQbHx1jlDoIO6FLz8Dfkm0DToanw0GoHs2Q+uXJ8ve/oBs0VJZFYPquBmcyfny4WIh4L0lwzsiAVWJ6PvzF5HMuNcwQ== rsa-key-20210508
-#EOF
 
 sudo -u cse -i echo "Install CSE" 
 sudo -u cse -i cse install -k /opt/vmware/cse/.ssh/authorized_keys
@@ -243,12 +237,88 @@ sudo -u cse -i cse install -k /opt/vmware/cse/.ssh/authorized_keys
 # Or use this if you've already installed and want to skip template creation again
 #sudo -u cse -i cse upgrade --skip-template-creation -k /opt/vmware/cse/.ssh/authorized_keys
 
-sudo -u cse -i echo "Enable TKGm runtimes for CSE"
-sudo -u cse -i export CSE_TKG_M_ENABLED=True
+sudo -u cse -i echo "Enable Kubernetes runtimes for CSE"
 sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 
 sudo -u cse -i echo "Enable a tenant to use native runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --native --org tenant1 tenant1-vdc
+
+# Also setup TKGm runtimes for CSE
+sudo -u cse -i cat > /opt/vmware/cse/config/tkgm-config-not-encrypted.conf << EOF
+# tkgm-config-not-encrypted.conf for TKGm kubernetes clusters using this cookbook https://raw.githubusercontent.com/vmware/container-service-extension-templates/tkgm/template.yaml
+# Only one of the amqp or mqtt sections should be present. I am using MQTT.
+ 
+#amqp: # I recommend using MQTT
+#  exchange: cse-ext
+#  host: amqp.vmware.com
+#  password: guest
+#  port: 5672
+#  prefix: vcd
+#  routing_key: cse
+#  username: guest
+#  vhost: /
+
+# If you are not using CA signed SSL certificates for VCD and vCenter then set verify: false below.
+
+mqtt:
+  verify_ssl: false
+ 
+vcd:
+  api_version: '35.0'
+  host: vcd.vmwire.com
+  log: true
+  password: Vmware1!
+  port: 443
+  username: administrator
+  verify: true
+ 
+# Add all vCenters that are registered in VCD
+vcs:
+- name: vcenter.vmwire.com
+  password: Vmware1!
+  username: administrator@vsphere.local
+  verify: true
+ 
+service:
+  enable_tkg_m: true
+  enforce_authorization: false
+  log_wire: false
+  processors: 15
+  telemetry:
+    enable: true
+ 
+broker:
+  catalog: cse-catalog
+  default_template_name: ubuntu-20.04_tkgm-1.20_antrea-0.11
+  default_template_revision: 1
+  ip_allocation_mode: pool
+  network: default-organization-network
+  org: cse
+  remote_template_cookbook_url: https://raw.githubusercontent.com/vmware/container-service-extension-templates/tkgm/template.yaml
+  storage_profile: 'truenas-iscsi-luns'
+  vdc: cse-vdc
+EOF
+
+chown cse:cse -R /opt
+chmod 775 -R /opt
+
+sudo -u cse -i echo "Encrypting config file"
+sudo -u cse -i cse encrypt /opt/vmware/cse/config/tkgm-config-not-encrypted.conf --output /opt/vmware/cse/config/config.yaml
+sudo -u cse -i chmod 600 /opt/vmware/cse/config/config.yaml
+sudo -u cse -i cse check /opt/vmware/cse/config/config.yaml
+
+sudo -u cse -i echo "List all Kubernetes templates in VCD"
+sudo -u cse -i cse template list
+
+sudo -u cse -i echo "Upgrade CSE with TKGm Kubernetes runtimes" 
+sudo -u cse -i cse upgrade -k /opt/vmware/cse/.ssh/authorized_keys
+ 
+# Or use this if you've already installed and want to skip template creation again
+sudo -u cse -i cse upgrade --skip-template-creation -k /opt/vmware/cse/.ssh/authorized_keys
+
+sudo -u cse -i echo "Enable Kubernetes runtimes for CSE"
+sudo -u cse -i export CSE_TKG_M_ENABLED=True
+sudo -u cse -i vcd login vcd.vmwire.com system administrator -p Vmware1!
 
 sudo -u cse -i echo "Enable a tenant to use TKGm runtimes with CSE"
 sudo -u cse -i vcd cse ovdc enable --tkg --org tenant1 tenant1-vdc
