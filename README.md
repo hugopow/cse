@@ -26,4 +26,4 @@ chmod +x cse-install.sh
 sh cse-install.sh
 
 # Demo Video
-https://youtu.be/9Q2m0ncX8Mg
+<iframe width="560" height="315" src="https://www.youtube.com/embed/9Q2m0ncX8Mg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
