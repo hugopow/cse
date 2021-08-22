@@ -292,3 +292,4 @@ echo "Show cse.service status"
 systemctl status cse.service
 
 echo "CSE 3.0.4 succesfully installed"
+echo "Type systemctl status cse.service to verify that the CSE service is operational"
