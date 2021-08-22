@@ -24,3 +24,6 @@ chmod +x cse-install.sh
 #Run the script with as root. The script will do the rest.
 
 sh cse-install.sh
+
+# Demo Video
+![cse-install](https://user-images.githubusercontent.com/20446316/130359202-6757ced7-0108-4aff-a30a-89937c75d55e.gif)
