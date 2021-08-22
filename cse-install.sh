@@ -177,7 +177,9 @@ sudo -u cse -i cat > /opt/vmware/cse/config/config-not-encrypted.conf << EOF
 #  routing_key: cse
 #  username: guest
 #  vhost: /
- 
+
+# If you are not using CA signed SSL certificates for VCD and vCenter then set verify: false below.
+
 mqtt:
   verify_ssl: false
  
