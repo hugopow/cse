@@ -261,6 +261,7 @@ cse run
 EOF
 
 sudo -u cse -i echo "Make cse.sh executable"
+chown cse:cse /opt/vmware/cse/cse.sh
 sudo -u cse -i chmod +x /opt/vmware/cse/cse.sh
  
 sudo -u cse -i echo "Deactivate the python virtual environment and go back to root"
