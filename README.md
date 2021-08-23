@@ -21,7 +21,7 @@ curl https://raw.githubusercontent.com/hugopow/cse/main/cse-install.sh --output 
 chmod +x cse-install.sh
 
 # Edit the script and remove/add your details
-#Run the script as root. The script will do the rest.
+#Run the script as root. The script will do the rest. Tested in environments with CA signed certificates.
 
 sh cse-install.sh
 
