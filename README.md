@@ -11,7 +11,7 @@ Please refer to these two links to get familiar with Container Service Extension
 
 USAGE INSTRUCTIONS
 
-Get your Photon VM up and running with a hostname and IP address with outbound access to the Internet.
+Get your Photon VM http://packages.vmware.com/photon/3.0/GA/ova/photon-hw13_uefi-3.0-26156e2.ova up and running with a hostname and IP address with outbound access to the Internet.
 
 Get the script to the Photon VM by running the following command
 
