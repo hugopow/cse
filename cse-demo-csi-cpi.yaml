@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  serviceName: "nginx-service"
+  serviceName: "cse-demo-csi-cpi-service"
   replicas: 1
   template:
     metadata:
@@ -48,7 +48,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service
+  name: cse-demo-csi-cpi-service
   namespace: cse-demo-csi-cpi
 spec:
   selector:
