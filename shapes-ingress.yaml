@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: shapes-ingress
+  annotations:
+    kubernetes.io/ingress.class: "contour"
+spec:
+  rules:
+  - host: circles.apps.vmwire.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: circles
+          servicePort: 80
+  - host: triangles.apps.vmwire.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: triangles
+          servicePort: 80
