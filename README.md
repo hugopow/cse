@@ -29,11 +29,12 @@ The configuration and installation is a very simple process:
 
 Don't forget to download the photon-cse image from my Harbor registry to save both your and my bandwidth.
 
-**Pull command**
+**Pull commands to download the bits**
 
 helm pull oci://harbor.vmwire.com/library/cse, this pulls this helm chart
 
 docker pull harbor.vmwire.com/library/photon-cse, this pulls the photon-cse image which is a Photon 3.0 image with the necessary pre-requisites to run CSE.
   
 **Push commands to push to your repository**
-  
+
+helm push cse-0.1.0.tgz oci://<your-repo>/library/
