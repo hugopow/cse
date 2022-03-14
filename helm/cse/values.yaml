@@ -6,7 +6,7 @@ replicaCount: 1
 
 # Availability zones in deployment.yaml are setup for TKG and must match VsphereFailureDomain and VsphereDeploymentZones
 availabilityZones:
-  enabled: true
+  enabled: false
 
 pvcName: cse-pvc
 storageClass: tanzu-local-ssd
