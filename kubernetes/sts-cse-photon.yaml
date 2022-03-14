@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cse
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cse-ssh-service
+  namespace: cse
+  annotations:
+  labels:
+spec:
+  selector:
+    app: cse
+  ports:
+    - name: ssh
+      port: 22
+      targetPort: 22
+      protocol: TCP
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cse
+  namespace: cse
+spec:
+  selector:
+    matchLabels:
+      app: cse
+  serviceName: "cse-ssh-service"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cse
+    spec:
+      initContainers:
+      - name: init-myservice
+        image: busybox:1.28
+        command: ['sh', '-c', 'mkdir -p /opt/vmware; echo>/opt/vmware/test.txt']
+        volumeMounts:
+        - name: cse-pvc
+          mountPath: /opt/vmware
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: photon
+        image: harbor.vmwire.com/library/photon:3.0
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: 1
+          limits:
+            memory: "3Gi"
+            cpu: 1
+        command: ['sh', '-c', 'if [ -f /opt/vmware/test.txt ]; then sleep 99999; fi']
+        ports:
+        - containerPort: 22
+          name: cse-ssh
+        volumeMounts:
+        - name: cse-pvc
+          mountPath: /opt/vmware
+  volumeClaimTemplates:
+  - metadata:
+      name: cse-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "iscsi"
+      resources:
+        requests:
+          storage: 10Gi

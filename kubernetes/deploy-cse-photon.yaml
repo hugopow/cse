@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cse
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cse
+  namespace: cse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cse
+  template:
+    metadata:
+      labels:
+        app: cse
+    spec:
+      initContainers:
+      - name: init-myservice
+        image: busybox:1.28
+        command: ['sh', '-c', 'mkdir -p /home/vmware; echo>/home/vmware/test.txt']
+        volumeMounts:
+        - mountPath: /home/vmware
+          name: cse-data
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: photon
+        image: harbor.vmwire.com/library/photon-cse
+        command: ['sh', '-c', 'if [ -f /home/vmware/test.txt ]; then sleep 99999; fi']
+        volumeMounts:
+        - mountPath: /home/vmware
+          name: cse-data
+      volumes:
+      - name: cse-data
+        persistentVolumeClaim:
+         claimName: cse-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cse-pvc
+  namespace: cse
+  labels:
+    storage-tier: tanzu-shared-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: iscsi
+  resources:
+    requests:
+        storage: 5Gi
