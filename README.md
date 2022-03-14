@@ -2,7 +2,7 @@
 
 # Look inside the Helm directory
 
-Use at your own risk. No support is provided.
+Use at your own risk. No support is provided. This is not an official CSE feature or release.
 
 **What is Container Service Extension?**
 
