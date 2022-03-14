@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scripts-configmap
+data:
+{{ (.Files.Glob "scripts/config-not-encrypted.sh").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: run-cse-configmap
+data:
+{{ (.Files.Glob "scripts/run-cse.sh").AsConfig | indent 2 }}

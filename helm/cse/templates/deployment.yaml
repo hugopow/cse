@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cse.fullname" . }}
+  labels:
+    {{- include "cse.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "cse.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "cse.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cse.serviceAccountName" . }}
+      initContainers:
+      - name: init-container
+        image: busybox:1.28
+        command: ["/bin/sh"]
+        args: ["/scripts-dir/config-not-encrypted.sh"]
+        volumeMounts:
+        - mountPath: /home/vmware
+          name: cse-data
+        - name: scripts-vol
+          mountPath: /scripts-dir
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        command: ["/bin/sh"]
+        args: ["/cse-scripts-dir/run-cse.sh"]
+        volumeMounts:
+        - mountPath: /home/vmware
+          name: cse-data
+        - name: cse-scripts-vol
+          mountPath: /cse-scripts-dir
+      volumes:
+      - name: cse-data
+        persistentVolumeClaim:
+         claimName: {{ .Values.pvcName }}
+      - name: scripts-vol
+        configMap:
+          name: scripts-configmap
+      - name: cse-scripts-vol
+        configMap:
+          name: run-cse-configmap
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.availabilityZones.enabled }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.csi.vmware.com/k8s-zone
+                operator: In
+                values:
+                - az-1
+                - az-2
+                - az-3
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ .Chart.Name }}
+            topologyKey: topology.csi.vmware.com/k8s-zone
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
