@@ -14,9 +14,9 @@ CSE is also not available as an OVA (Virtual Appliance), so some users may find 
 
 This helm chart can be used to configure, install and run CSE 3.1.2 on a Kubernetes cluster. The config and deployment is very simple and takes less than 5 minutes to get up and running.
 
-You can also run multiple pods of CSE to enable high availability. Unsupported by it works.
+You can also run multiple pods of CSE to enable high availability. Unsupported but it works.
 
-**How does it work?**
+**Installation Instructions**
 
 The configuration and installation is a very simple process:
 
@@ -28,3 +28,6 @@ The configuration and installation is a very simple process:
 6. Install the helm chart with a single command such as helm install cse oci://<your-repo>/library/cse --version 0.1.0 -n cse -f /home/cse-helm/cse/values.yaml
 
 Don't forget to download the photon-cse image from my Harbor registry to save both your and my bandwidth.
+
+**Pull command**
+  helm pull oci://harbor.vmwire.com/library/cse
