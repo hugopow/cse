@@ -1,5 +1,7 @@
 # Helm Chart to configure and deploy Container Service Extension and run in Kubernetes.
 
+# Look inside the Helm directory
+
 Use at your own risk. No support is provided.
 
 **What is Container Service Extension?**
