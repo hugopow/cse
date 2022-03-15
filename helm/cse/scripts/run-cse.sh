@@ -21,6 +21,14 @@ extensions:
 - container_service_extension.client.cse
 EOF
 
+# Create service account, if already done previously then comment this section out.
+#vcd login vcd.vmwire.com system administrator -p Vmware1!
+#cse create-service-role vcd.vmwire.com
+# Enter system administrator username and password
+ 
+# Create VCD service account for CSE, if already done previously then comment this section out.
+#vcd user create --enabled svc-cse Vmware1! "CSE Service Role"
+ 
 # Encrypt config file and set permissionsa
 echo " Encrypt config file, place into /opt/vmware/cse/config/config.yaml and make executable"
 cse encrypt /home/vmware/config-not-encrypted.conf  --output /opt/vmware/cse/config/config.yaml
