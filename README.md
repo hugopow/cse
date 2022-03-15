@@ -25,16 +25,22 @@ The configuration and installation is a very simple process:
 3. Make changes to the helm chart values.yaml
 4. Make changes to the config-not-encrypted.yaml which contains the CSE configuration
 5. Package your changes to a new helm chart and upload to your repository
-6. Install the helm chart with a single command such as helm install cse oci://<your-repo>/library/cse --version 0.1.0 -n cse -f /home/cse-helm/cse/values.yaml
+6. Install the helm chart with a single command such as
 
-Don't forget to download the photon-cse image from my Harbor registry to save both your and my bandwidth.
+helm install cse oci://<your-registry>/cse --version 0.1.0 -n cse -f /home/cse-helm/cse/values.yaml
 
-**Pull commands to download the bits**
+Don't forget to download the photon-cse image from my Harbor registry to save bandwidth, both yours and mine. (big grin).
 
-helm pull oci://harbor.vmwire.com/library/cse, this pulls this helm chart
+Pull commands to download the bits
+helm pull oci://harbor.vmwire.com/library/cse
 
-docker pull harbor.vmwire.com/library/photon-cse, this pulls the photon-cse image which is a Photon 3.0 image with the necessary pre-requisites to run CSE.
-  
-**Push commands to push to your repository**
+this pulls this helm chart.
+docker pull harbor.vmwire.com/library/photon-cse
 
-helm push cse-0.1.0.tgz oci://<your-repo>/library/
+this pulls the photon-cse image which is a Photon 3.0 image with the necessary per-requisites to run CSE.
+
+Push commands to push to your repository
+helm push cse-0.1.0.tgz oci://<your-registry>/
+
+docker tag photon-cse <your-registry>/library/photon-cse:latest
+docker push <your-registry>/library/photon-cse:latest
