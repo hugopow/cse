@@ -24,8 +24,9 @@ The configuration and installation is a very simple process:
 2. Unzip it locally
 3. Make changes to the helm chart values.yaml
 4. Make changes to the config-not-encrypted.yaml which contains the CSE configuration
-5. Package your changes to a new helm chart and upload to your repository
-6. Install the helm chart with a single command such as
+5. Make any optional changes to the run-cse.sh script, to comment out sections as necessary.
+6. Package your changes to a new helm chart and upload to your repository
+7. Install the helm chart with a single command such as
 
 helm install cse oci://<your-registry>/cse --version 0.1.0 -n cse -f /home/cse-helm/cse/values.yaml
 
