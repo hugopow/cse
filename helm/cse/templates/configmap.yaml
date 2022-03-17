@@ -3,7 +3,41 @@ kind: ConfigMap
 metadata:
   name: scripts-configmap
 data:
-{{ (.Files.Glob "scripts/config-not-encrypted.sh").AsConfig | indent 2 }}
+  config-not-encrypted.conf: |-
+    mqtt:
+      verify_ssl: {{ .Values.containerServiceExtension.mqtt.verify_ssl }}
+ 
+    vcd:
+      host: {{ .Values.containerServiceExtension.vcd.host }}
+      log: {{ .Values.containerServiceExtension.vcd.log }}
+      password: {{ .Values.containerServiceExtension.vcd.password }}
+      port: {{ .Values.containerServiceExtension.vcd.port }}
+      username: {{ .Values.containerServiceExtension.vcd.username }}
+      verify: {{ .Values.containerServiceExtension.vcd.verify }}
+ 
+    vcs:
+      name: {{ .Values.containerServiceExtension.vcs.name }}
+      password: {{ .Values.containerServiceExtension.vcs.password }}
+      username: {{ .Values.containerServiceExtension.vcs.username }}
+      verify: {{ .Values.containerServiceExtension.vcs.verify }}
+ 
+    service:
+      enforce_authorization: {{ .Values.containerServiceExtension.service.enforce_authorization }}
+      legacy_mode: {{ .Values.containerServiceExtension.service.legacy_mode }}
+      log_wire: {{ .Values.containerServiceExtension.service.log_wire }}
+      no_vc_communication_mode: {{ .Values.containerServiceExtension.service.no_vc_communication_mode }}
+      processors: {{ .Values.containerServiceExtension.service.processors }}
+      telemetry:
+        enable: {{ .Values.containerServiceExtension.service.telemetry.enable }}
+ 
+    broker:
+      catalog: {{ .Values.containerServiceExtension.broker.catalog }}
+      ip_allocation_mode: {{ .Values.containerServiceExtension.broker.ip_allocation_mode }}
+      network: {{ .Values.containerServiceExtension.broker.network }}
+      org: {{ .Values.containerServiceExtension.broker.org }}
+      remote_template_cookbook_url: {{ .Values.containerServiceExtension.broker.remote_template_cookbook_url }}
+      storage_profile: {{ .Values.containerServiceExtension.broker.storage_profile }}
+      vdc: {{ .Values.containerServiceExtension.broker.vdc }}
 ---
 apiVersion: v1
 kind: ConfigMap
